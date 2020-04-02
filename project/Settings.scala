@@ -26,5 +26,5 @@ object Settings {
 
   val storageDependencies: List[ModuleID]     = List(zio) ++ doobie
   val serviceDependencies: List[sbt.ModuleID] = storageDependencies
-  val bootDependencies: List[sbt.ModuleID]    = serviceDependencies
+  val bootDependencies: List[sbt.ModuleID]    = serviceDependencies ++ Seq(pureConfig)
 }

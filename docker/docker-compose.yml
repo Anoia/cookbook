@@ -1,0 +1,10 @@
+version: '3.7'
+services:
+  cdb:
+    container_name: cookbook_postgres
+    image: postgres:12.2
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: cookbook
+      POSTGRES_PASSWORD: cookbook
