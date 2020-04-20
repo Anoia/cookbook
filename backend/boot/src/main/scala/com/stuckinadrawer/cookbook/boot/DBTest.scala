@@ -22,5 +22,5 @@ class DBTest(config: PostgresConfig) {
   }
 
   def find(): ConnectionIO[Option[SomeDbValue]] =
-    sql"select name from testbook limit 1".query[SomeDbValue].option
+    sql"select name from test_book limit 1".query[SomeDbValue].option
 }
