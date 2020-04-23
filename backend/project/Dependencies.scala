@@ -9,7 +9,8 @@ object Dependencies {
   val doobie = Seq(
     "org.tpolecat" %% "doobie-core"     % Version.doobie,
     "org.tpolecat" %% "doobie-postgres" % Version.doobie,
-    "org.tpolecat" %% "doobie-specs2"   % Version.doobie
+    "org.tpolecat" %% "doobie-specs2"   % Version.doobie,
+    "org.tpolecat" %% "doobie-hikari"   % Version.doobie
   )
 
   val flyway = Seq(

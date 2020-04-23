@@ -1,5 +1,6 @@
 package com.stuckinadrawer.cookbook.boot
 
+import com.stuckinadrawer.bookbook.domain.ServiceConf
 import org.flywaydb.core.Flyway
 import pureconfig._
 import pureconfig.generic.auto._
@@ -22,22 +23,28 @@ object Boot extends App {
       try {
         val db = new DBTest(conf.postgres)
 
-        db.tryToRead() match {
-          case Some(value) => println(s"yay: $value")
-          case None        => println(s"meh.failed")
-        }
+        // val r = Recipe("pasta", List("pasta, tomatoes"), "cook and combine")
+
+        // db.execute(db.createRecipe("salad", List("cucumber, salad"), "cut and toss"))
+
+        val recipe = db.execute(db.createRecipe2("steak", List("steak", "steak"), "grill it!"))
+
+        println(s"Added a new recipe: $recipe")
+
+        val r = db.execute(db.readRecipes())
+        r.map(value => println(s"yay: $value"))
+
       } catch {
         case t: Throwable => println(s" very meh: $t")
       }
 
   }
 
-  def fly(conf: ServiceConf) = {
-    val f = Flyway
+  def fly(conf: ServiceConf) =
+    Flyway
       .configure()
       .dataSource(conf.postgres.url, conf.postgres.user, conf.postgres.pass)
       .load()
-    f.migrate()
-  }
+      .migrate()
 
 }

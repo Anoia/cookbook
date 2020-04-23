@@ -1,4 +1,4 @@
-package com.stuckinadrawer.cookbook.boot
+package com.stuckinadrawer.bookbook.domain
 
 case class PostgresConfig(
     driver: String,
