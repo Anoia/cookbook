@@ -1,7 +1,7 @@
 package com.stuckinadrawer.cookbook.storage
 
 import cats.effect.IO
-import com.stuckinadrawer.bookbook.domain.CookBook.{NewRecipe, Recipe, RecipeId, RecipePatch}
+import com.stuckinadrawer.cookbook.domain.CookBook.{NewRecipe, Recipe, RecipeId, RecipePatch}
 
 object RecipeRepository {
   trait Service {

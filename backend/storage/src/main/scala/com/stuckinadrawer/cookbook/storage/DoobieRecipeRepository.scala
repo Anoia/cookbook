@@ -2,8 +2,9 @@ package com.stuckinadrawer.cookbook.storage
 
 import cats.effect._
 import cats.implicits._
-import com.stuckinadrawer.bookbook.domain.CookBook.{NewRecipe, Recipe, RecipeId}
-import com.stuckinadrawer.bookbook.domain.{CookBook, PostgresConfig}
+import com.stuckinadrawer.cookbook.domain.CookBook.{NewRecipe, Recipe, RecipeId}
+import com.stuckinadrawer.cookbook.domain.CookBook
+import com.stuckinadrawer.cookbook.domain.{CookBook, PostgresConfig}
 import doobie._
 import doobie.free.connection
 import doobie.hikari.HikariTransactor

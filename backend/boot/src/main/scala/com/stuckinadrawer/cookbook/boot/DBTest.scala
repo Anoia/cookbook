@@ -2,11 +2,11 @@ package com.stuckinadrawer.cookbook.boot
 import doobie._
 import doobie.implicits._
 import cats.effect.IO
-import com.stuckinadrawer.bookbook.domain.CookBook.Ingredient
+import com.stuckinadrawer.cookbook.domain.CookBook.Ingredient
 import cats.data.NonEmptyList
 import cats.effect._
 import cats.implicits._
-import com.stuckinadrawer.bookbook.domain.PostgresConfig
+import com.stuckinadrawer.cookbook.domain.PostgresConfig
 import doobie.util.transactor.Transactor.Aux
 import doobie.postgres._
 import doobie.postgres.implicits._

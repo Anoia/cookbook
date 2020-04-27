@@ -1,6 +1,6 @@
 package com.stuckinadrawer.cookbook.boot
 
-import com.stuckinadrawer.bookbook.domain.ServiceConf
+import com.stuckinadrawer.cookbook.domain.ServiceConf
 import org.flywaydb.core.Flyway
 import pureconfig._
 import pureconfig.generic.auto._
