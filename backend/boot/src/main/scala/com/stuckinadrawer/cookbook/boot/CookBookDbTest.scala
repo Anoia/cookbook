@@ -23,7 +23,7 @@ object CookBookDbTest extends IOApp {
   }
 
   def serverBuilder(rr: RecipeRepository.Service): BlazeServerBuilder[IO] = {
-    val services = new RecipeService(rr).http
+    val services = new RecipeService(rr).recipeRoutes
     val httpApp  = Router("/" -> services, "/api" -> services).orNotFound
     BlazeServerBuilder[IO].bindHttp(8080, "localhost").withHttpApp(httpApp)
   }
