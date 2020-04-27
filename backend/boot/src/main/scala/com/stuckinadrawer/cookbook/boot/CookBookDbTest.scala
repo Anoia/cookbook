@@ -1,20 +1,18 @@
 package com.stuckinadrawer.cookbook.boot
 
 import cats.effect._
-import com.stuckinadrawer.cookbook.domain.ServiceConf
-import com.stuckinadrawer.cookbook.storage.{DoobieRecipeRepository, RecipeRepository}
-import org.flywaydb.core.Flyway
-import pureconfig.ConfigSource
 import cats.implicits._
 import com.stuckinadrawer.cookbook.domain.CookBook.{NewRecipe, RecipePatch}
 import com.stuckinadrawer.cookbook.domain.{PostgresConfig, ServiceConf}
 import com.stuckinadrawer.cookbook.service.RecipeService
-import doobie.postgres._
-import doobie.postgres.implicits._
-import pureconfig.generic.auto._
-import org.http4s.server.blaze._
+import com.stuckinadrawer.cookbook.storage.{DoobieRecipeRepository, RecipeRepository}
+import org.flywaydb.core.Flyway
 import org.http4s.implicits._
 import org.http4s.server.Router
+import org.http4s.server.blaze._
+import org.http4s.server.middleware.Logger
+import pureconfig.generic.auto._
+import pureconfig.ConfigSource
 
 object CookBookDbTest extends IOApp {
 
@@ -24,8 +22,11 @@ object CookBookDbTest extends IOApp {
 
   def serverBuilder(rr: RecipeRepository.Service): BlazeServerBuilder[IO] = {
     val services = new RecipeService(rr).recipeRoutes
-    val httpApp  = Router("/" -> services, "/api" -> services).orNotFound
-    BlazeServerBuilder[IO].bindHttp(8080, "localhost").withHttpApp(httpApp)
+
+    val httpApp = Router("/" -> services, "/api" -> services).orNotFound
+    BlazeServerBuilder[IO]
+      .bindHttp(8080, "localhost")
+      .withHttpApp(Logger.httpApp(logHeaders = true, logBody = true)(httpApp))
   }
 
   override def run(args: List[String]): IO[ExitCode] = {
@@ -36,12 +37,10 @@ object CookBookDbTest extends IOApp {
       repo = DoobieRecipeRepository.createRecipeRepository(cfg.postgres)
       test <- repo.use(r => serverBuilder(r).resource.use(_ => IO.never))
     } yield {
-
       test
     }
 
     dbResource.as(ExitCode.Success)
-
   }
 
   def testDb(repo: RecipeRepository.Service): IO[String] =
