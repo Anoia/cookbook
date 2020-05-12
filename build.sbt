@@ -3,7 +3,8 @@ import Settings._
 
 lazy val boot = project
   .settings(commonSettings)
-  .settings(libraryDependencies ++= bootDependencies)
+  .settings(libraryDependencies ++= bootDependencies,
+            testFrameworks += new TestFramework("munit.Framework"))
 // .dependsOn(service)
 
 lazy val cookbook = project
