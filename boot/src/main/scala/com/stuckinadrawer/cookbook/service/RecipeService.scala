@@ -3,6 +3,7 @@ package com.stuckinadrawer.cookbook.service
 import cats.effect.IO
 import com.stuckinadrawer.cookbook.domain.CookBook.{NewRecipe, RecipeId, RecipePatch}
 import com.stuckinadrawer.cookbook.storage.RecipeRepository
+import io.circe.{Encoder, Json}
 import io.circe.generic.auto._
 import org.http4s._
 import org.http4s.circe.CirceEntityDecoder._
@@ -22,6 +23,8 @@ class RecipeService(repo: RecipeRepository.Service) {
       }
     }
   }
+
+  implicit val encodeRecipeId: Encoder[RecipeId] = (a: RecipeId) => Json.fromLong(a.value)
 
   def optionToResponse[A](
       o: Option[A]
