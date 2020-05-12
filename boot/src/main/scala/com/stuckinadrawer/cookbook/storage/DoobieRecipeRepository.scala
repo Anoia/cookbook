@@ -3,7 +3,6 @@ package com.stuckinadrawer.cookbook.storage
 import cats.effect._
 import cats.implicits._
 import com.stuckinadrawer.cookbook.domain.CookBook.{NewRecipe, Recipe, RecipeId}
-import com.stuckinadrawer.cookbook.domain.CookBook
 import com.stuckinadrawer.cookbook.domain.{CookBook, PostgresConfig}
 import doobie._
 import doobie.free.connection
@@ -18,7 +17,8 @@ final class DoobieRecipeRepository(xa: HikariTransactor[IO]) {
 
   val recipeRepository = new RecipeRepository.Service {
 
-    override def getById(id: RecipeId): IO[Option[Recipe]] = SQL.get(id).option.transact(xa)
+    override def getById(id: RecipeId): IO[Option[Recipe]] =
+      SQL.get(id).option.transact(xa)
 
     override def getAll: IO[List[Recipe]] = SQL.getAll.to[List].transact(xa)
 
@@ -27,7 +27,12 @@ final class DoobieRecipeRepository(xa: HikariTransactor[IO]) {
     override def create(recipe: NewRecipe): IO[Recipe] =
       SQL
         .create(recipe)
-        .withUniqueGeneratedKeys[Recipe]("id", "name", "ingredients", "instructions")
+        .withUniqueGeneratedKeys[Recipe](
+          "id",
+          "name",
+          "ingredients",
+          "instructions"
+        )
         .transact(xa)
 
     override def update(id: RecipeId, patch: CookBook.RecipePatch): IO[Option[Recipe]] =
@@ -45,14 +50,22 @@ object DoobieRecipeRepository {
 
   import doobie.hikari._
 
-  def createRecipeRepository(cfg: PostgresConfig)(
-      implicit cs: ContextShift[IO]): Resource[IO, RecipeRepository.Service] = {
+  def createRecipeRepository(
+      cfg: PostgresConfig
+  )(implicit cs: ContextShift[IO]): Resource[IO, RecipeRepository.Service] = {
     // implicit val cs: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
     for {
       ce <- ExecutionContexts.fixedThreadPool[IO](32)
       be <- Blocker[IO]
       xa <- HikariTransactor
-        .newHikariTransactor[IO](cfg.driver, cfg.url, cfg.user, cfg.pass, ce, be)
+        .newHikariTransactor[IO](
+          cfg.driver,
+          cfg.url,
+          cfg.user,
+          cfg.pass,
+          ce,
+          be
+        )
     } yield new DoobieRecipeRepository(xa).recipeRepository
   }
 
@@ -71,7 +84,8 @@ object DoobieRecipeRepository {
          """.query[Recipe]
 
     def getAll: Query0[Recipe] =
-      sql"""SELECT id, name, ingredients, instructions FROM recipe""".query[Recipe]
+      sql"""SELECT id, name, ingredients, instructions FROM recipe"""
+        .query[Recipe]
 
     def update(recipe: Recipe): Update0 =
       sql"""

@@ -26,5 +26,6 @@ object Settings {
 
   val storageDependencies: List[ModuleID]     = List(zio) ++ doobie ++ flyway
   val serviceDependencies: List[sbt.ModuleID] = storageDependencies ++ http4s ++ circe
-  val bootDependencies: List[sbt.ModuleID]    = serviceDependencies ++ Seq(pureConfig)
+  val bootDependencies: List[sbt.ModuleID] =
+    serviceDependencies ++ Seq(pureConfig) ++ Seq(scalaTest)
 }

@@ -29,6 +29,8 @@ object Dependencies {
     "io.circe" %% "circe-parser",
     "io.circe" %% "circe-literal"
   ).map(_ % Version.circe)
+
+  val scalaTest = "org.scalatest" %% "scalatest" % Version.scalaTest % "test"
 }
 object Version {
   val zio        = "1.0.0-RC18-2"
@@ -37,4 +39,5 @@ object Version {
   val http4s     = "0.21.3"
   val circe      = "0.13.0"
   val pureConfig = "0.12.3"
+  val scalaTest  = "3.1.1"
 }

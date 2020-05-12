@@ -1,12 +1,12 @@
 package com.stuckinadrawer.cookbook.service
 
-import cats.effect.{IO, _}
+import cats.effect.IO
 import com.stuckinadrawer.cookbook.domain.CookBook.{NewRecipe, RecipeId, RecipePatch}
 import com.stuckinadrawer.cookbook.storage.RecipeRepository
 import io.circe.generic.auto._
 import org.http4s._
-import org.http4s.circe.CirceEntityEncoder._
 import org.http4s.circe.CirceEntityDecoder._
+import org.http4s.circe.CirceEntityEncoder._
 import org.http4s.dsl.io._
 import org.http4s.server.Router
 
@@ -23,8 +23,9 @@ class RecipeService(repo: RecipeRepository.Service) {
     }
   }
 
-  def optionToResponse[A](o: Option[A])(
-      implicit entityEncoder: EntityEncoder[IO, A]): IO[Response[IO]] = o match {
+  def optionToResponse[A](
+      o: Option[A]
+  )(implicit entityEncoder: EntityEncoder[IO, A]): IO[Response[IO]] = o match {
     case Some(value) => Ok(value)
     case None        => NotFound()
   }
@@ -66,9 +67,7 @@ class RecipeService(repo: RecipeRepository.Service) {
   }
 
   val recipeRoutes: HttpRoutes[IO] = {
-    Router(
-      "/recipes" -> http
-    )
+    Router("/recipes" -> http)
   }
 
 }
