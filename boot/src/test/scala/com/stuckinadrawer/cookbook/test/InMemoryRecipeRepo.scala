@@ -11,7 +11,9 @@ class InMemoryRecipeRepo extends RecipeRepository.Service {
   var repo: Map[RecipeId, Recipe] = Map.empty
   var id: Long                    = 0
 
-  override def getAll: IO[List[Recipe]] = IO { repo.values.toList }
+  override def getAll: IO[List[RecipeOverview]] = IO {
+    repo.values.map(r => RecipeOverview(r.id, r.name, r.description)).toList
+  }
 
   override def getById(id: RecipeId): IO[Option[Recipe]] = IO { repo.get(id) }
 
@@ -25,12 +27,12 @@ class InMemoryRecipeRepo extends RecipeRepository.Service {
     id += 1
     val r =
       Recipe(RecipeId(id),
-             RecipeData(recipe.name,
-                        recipe.description,
-                        recipe.ingredients,
-                        recipe.instructions,
-                        OffsetDateTime.now(),
-                        OffsetDateTime.now()))
+             recipe.name,
+             recipe.description,
+             recipe.ingredients,
+             recipe.instructions,
+             OffsetDateTime.now(),
+             OffsetDateTime.now())
     repo = repo + (r.id -> r)
     r
   }

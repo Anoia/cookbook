@@ -8,27 +8,24 @@ object Recipe {
 
   type Ingredient = String
 
-  final case class Recipe(id: RecipeId, recipeData: RecipeData) {
+  final case class Recipe(id: RecipeId,
+                          name: String,
+                          description: String,
+                          ingredients: List[Ingredient],
+                          instructions: String,
+                          created_at: OffsetDateTime,
+                          update_at: OffsetDateTime) {
     def update(patch: RecipePatch): Recipe = {
       copy(
-        recipeData = recipeData.copy(
-          name = patch.name.getOrElse(recipeData.name),
-          description = patch.description.getOrElse(recipeData.description),
-          ingredients = patch.ingredients.getOrElse(recipeData.ingredients),
-          instructions = patch.instructions.getOrElse(recipeData.instructions)
-        )
+        name = patch.name.getOrElse(name),
+        description = patch.description.getOrElse(description),
+        ingredients = patch.ingredients.getOrElse(ingredients),
+        instructions = patch.instructions.getOrElse(instructions)
       )
     }
   }
 
-  final case class RecipeOverview(name: String, description: String)
-
-  final case class RecipeData(name: String,
-                              description: String,
-                              ingredients: List[Ingredient],
-                              instructions: String,
-                              created_at: OffsetDateTime,
-                              update_at: OffsetDateTime)
+  final case class RecipeOverview(id: RecipeId, name: String, description: String)
 
   final case class NewRecipe(name: String,
                              description: String,

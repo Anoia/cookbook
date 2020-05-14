@@ -3,7 +3,13 @@ package com.stuckinadrawer.cookbook.storage
 import cats.effect._
 import cats.implicits._
 import com.stuckinadrawer.cookbook.domain.PostgresConfig
-import com.stuckinadrawer.cookbook.domain.Recipe.{NewRecipe, Recipe, RecipeId, RecipePatch}
+import com.stuckinadrawer.cookbook.domain.Recipe.{
+  NewRecipe,
+  Recipe,
+  RecipeId,
+  RecipeOverview,
+  RecipePatch
+}
 import doobie._
 import doobie.free.connection
 import doobie.hikari.HikariTransactor
@@ -21,7 +27,7 @@ final class DoobieRecipeRepository(xa: HikariTransactor[IO]) {
     override def getById(id: RecipeId): IO[Option[Recipe]] =
       SQL.get(id).option.transact(xa)
 
-    override def getAll: IO[List[Recipe]] = SQL.getAll.to[List].transact(xa)
+    override def getAll: IO[List[RecipeOverview]] = SQL.getAll.to[List].transact(xa)
 
     override def delete(id: RecipeId): IO[Int] = SQL.delete(id).run.transact(xa)
 
@@ -88,17 +94,17 @@ object DoobieRecipeRepository {
          FROM recipe where id = ${id.value}
          """.query[Recipe]
 
-    def getAll: Query0[Recipe] =
-      sql"""SELECT id, name, description, ingredients, instructions, created_at, updated_at FROM recipe"""
-        .query[Recipe]
+    def getAll: Query0[RecipeOverview] =
+      sql"""SELECT id, name, description FROM recipe ORDER BY created_at DESC"""
+        .query[RecipeOverview]
 
     def update(recipe: Recipe): Update0 =
       sql"""
          UPDATE recipe SET
-         name = ${recipe.recipeData.name},
-         description = ${recipe.recipeData.description},
-         ingredients = ${recipe.recipeData.ingredients},
-         instructions = ${recipe.recipeData.instructions}
+         name = ${recipe.name},
+         description = ${recipe.description},
+         ingredients = ${recipe.ingredients},
+         instructions = ${recipe.instructions}
          WHERE id= ${recipe.id.value}
          """.update
 
