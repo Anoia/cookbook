@@ -1,4 +1,4 @@
-CREATE TABLE recipe
+CREATE TABLE IF NOT EXISTS recipe
 (
     id          BIGSERIAL PRIMARY KEY,
     name        VARCHAR NOT NULL,
