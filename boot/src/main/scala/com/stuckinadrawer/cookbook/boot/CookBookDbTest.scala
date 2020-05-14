@@ -43,17 +43,6 @@ object CookBookDbTest extends IOApp {
     dbResource.as(ExitCode.Success)
   }
 
-  def testDb(repo: RecipeRepository.Service): IO[String] =
-    for {
-      //  _ <- repo.create(NewRecipe("steak", List("meat", "meat"), "fry it!"))
-      secondRecipe <- repo.create(
-        NewRecipe("salad", List("cucumber", "tomato", "salad"), "toss it"))
-      _   <- repo.update(secondRecipe.id, RecipePatch(name = Some("cucumber tomato salad")))
-      all <- repo.getAll
-    } yield {
-      all.map(r => s"$r").mkString(" ")
-    }
-
   def migrateDB(cfg: PostgresConfig): IO[Int] =
     IO {
       Flyway
