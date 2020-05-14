@@ -1,5 +1,7 @@
 package com.stuckinadrawer.cookbook.test
 
+import java.time.OffsetDateTime
+
 import cats.effect.IO
 import com.stuckinadrawer.cookbook.domain.Recipe.NewRecipe
 import com.stuckinadrawer.cookbook.service.RecipeService
@@ -10,8 +12,8 @@ import org.http4s.implicits._
 import org.http4s.{HttpRoutes, Status, _}
 
 class RecipeServiceTest extends munit.FunSuite with Http4sTestHelper {
-
-  val inMemoryRepo           = new InMemoryRecipeRepo()
+  val now                    = OffsetDateTime.now()
+  val inMemoryRepo           = new InMemoryRecipeRepo(now)
   val routes: HttpRoutes[IO] = new RecipeService(inMemoryRepo).recipeRoutes
 
   val pastaRecipe: NewRecipe = NewRecipe("pasta", "desc", List("pasta", "tomatoes"), "cook")
@@ -19,13 +21,12 @@ class RecipeServiceTest extends munit.FunSuite with Http4sTestHelper {
   val pastaJson: Json =
     Json.obj(
       ("id", Json.fromBigInt(1)),
-      ("recipeData",
-       Json.obj(
-         ("name", Json.fromString("pasta")),
-         ("ingredients",
-          Json.fromValues(List(Json.fromString("pasta"), Json.fromString("tomatoes")))),
-         ("instructions", Json.fromString("cook"))
-       ))
+      ("name", Json.fromString("pasta")),
+      ("description", Json.fromString("desc")),
+      ("ingredients", Json.fromValues(List(Json.fromString("pasta"), Json.fromString("tomatoes")))),
+      ("instructions", Json.fromString("cook")),
+      ("created_at", Json.fromString(now.toString)),
+      ("update_at", Json.fromString(now.toString))
     )
 
   test("get recipe by id") {
@@ -45,7 +46,11 @@ class RecipeServiceTest extends munit.FunSuite with Http4sTestHelper {
   test("get all recipes") {
     val response = routes.orNotFound.run(Request(method = GET, uri = uri"/recipes"))
     val expectedJson = Json.fromValues(
-      List(pastaJson)
+      List(
+        Json.obj(("id", Json.fromBigInt(1)),
+                 ("name", Json.fromString("pasta")),
+                 ("description", Json.fromString("desc")))
+      )
     )
     check[Json](response, Status.Ok, Some(expectedJson))
   }

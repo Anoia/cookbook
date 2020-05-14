@@ -6,7 +6,7 @@ import cats.effect.IO
 import com.stuckinadrawer.cookbook.domain.Recipe._
 import com.stuckinadrawer.cookbook.storage.RecipeRepository
 
-class InMemoryRecipeRepo extends RecipeRepository.Service {
+class InMemoryRecipeRepo(now: OffsetDateTime) extends RecipeRepository.Service {
 
   var repo: Map[RecipeId, Recipe] = Map.empty
   var id: Long                    = 0
@@ -31,8 +31,8 @@ class InMemoryRecipeRepo extends RecipeRepository.Service {
              recipe.description,
              recipe.ingredients,
              recipe.instructions,
-             OffsetDateTime.now(),
-             OffsetDateTime.now())
+             now,
+             now)
     repo = repo + (r.id -> r)
     r
   }
