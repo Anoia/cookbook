@@ -5,8 +5,8 @@ CREATE TABLE IF NOT EXISTS recipe
     description  TEXT                        NOT NULL DEFAULT '',
     ingredients  TEXT[]                      NOT NULL DEFAULT array[]::text[],
     instructions TEXT                        NOT NULL DEFAULT '',
-    created_at   TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
-    updated_at   TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc')
+    created_at   TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT (NOW()),
+    updated_at   TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT (NOW())
 );
 
 
@@ -17,7 +17,7 @@ AS
 $function$
 BEGIN
     IF row (NEW.*) IS DISTINCT FROM row (OLD.*) THEN
-        NEW.updated_at = (NOW() AT TIME ZONE 'utc');
+        NEW.updated_at = (NOW());
         RETURN NEW;
     ELSE
         RETURN OLD;
