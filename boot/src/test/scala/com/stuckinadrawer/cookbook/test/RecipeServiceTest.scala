@@ -1,7 +1,7 @@
 package com.stuckinadrawer.cookbook.test
 
 import cats.effect.IO
-import com.stuckinadrawer.cookbook.domain.CookBook.NewRecipe
+import com.stuckinadrawer.cookbook.domain.Recipe.NewRecipe
 import com.stuckinadrawer.cookbook.service.RecipeService
 import io.circe._
 import org.http4s.circe._
@@ -14,7 +14,7 @@ class RecipeServiceTest extends munit.FunSuite with Http4sTestHelper {
   val inMemoryRepo           = new InMemoryRecipeRepo()
   val routes: HttpRoutes[IO] = new RecipeService(inMemoryRepo).recipeRoutes
 
-  val pastaRecipe: NewRecipe = NewRecipe("pasta", List("pasta", "tomatoes"), "cook")
+  val pastaRecipe: NewRecipe = NewRecipe("pasta", "desc", List("pasta", "tomatoes"), "cook")
 
   val pastaJson: Json =
     Json.obj(

@@ -15,7 +15,7 @@ import pureconfig.ConfigSource
 
 import scala.concurrent.duration._
 
-object CookBookDbTest extends IOApp {
+object Boot extends IOApp {
 
   def loadConfig: IO[ServiceConf] = IO.fromEither {
     ConfigSource.default.load[ServiceConf].leftMap(e => new IllegalStateException(e.toString))

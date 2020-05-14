@@ -1,7 +1,7 @@
 package com.stuckinadrawer.cookbook.service
 
 import cats.effect.IO
-import com.stuckinadrawer.cookbook.domain.CookBook.{NewRecipe, RecipeId, RecipePatch}
+import com.stuckinadrawer.cookbook.domain.Recipe.{NewRecipe, RecipeId, RecipePatch}
 import com.stuckinadrawer.cookbook.storage.RecipeRepository
 import io.circe.{Encoder, Json}
 import io.circe.generic.auto._
