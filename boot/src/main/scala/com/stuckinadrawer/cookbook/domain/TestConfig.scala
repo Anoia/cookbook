@@ -7,6 +7,9 @@ case class PostgresConfig(
     pass: String,
 )
 
+case class HttpConfig(host: String, port: Int, allowedOrigins: Set[String])
+
 case class ServiceConf(
-    postgres: PostgresConfig
+    postgres: PostgresConfig,
+    http: HttpConfig
 )
