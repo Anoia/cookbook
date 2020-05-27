@@ -1,24 +1,13 @@
 import Dependencies._
 import sbt._
-import sbt.Keys.{scalacOptions, _}
+import sbt.Keys._
 
 object Settings {
 
   val commonSettings = {
     Seq(
-      scalaVersion := "2.13.1",
-      scalacOptions := Seq(
-        "-encoding",
-        "utf-8",
-        "-deprecation",
-        "-feature",
-        "-unchecked",
-        "-explaintypes",
-        "-language:postfixOps",
-        "-language:implicitConversions",
-        "-Xcheckinit",
-        "-Xfatal-warnings"
-      ),
+      scalaVersion := "2.13.2",
+      //    scalacOptions += "-Wconf:any:warning-verbose",
       version := (version in ThisBuild).value
     )
 

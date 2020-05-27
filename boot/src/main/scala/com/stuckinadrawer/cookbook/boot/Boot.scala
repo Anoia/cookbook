@@ -13,6 +13,7 @@ import org.http4s.server.middleware.{CORS, CORSConfig, Logger}
 import pureconfig.generic.auto._
 import pureconfig.ConfigSource
 
+import scala.annotation.nowarn
 import scala.concurrent.duration._
 
 object Boot extends IOApp {
@@ -37,7 +38,8 @@ object Boot extends IOApp {
 
   override def run(args: List[String]): IO[ExitCode] = {
 
-    val dbResource = for {
+    @nowarn("cat=w-flag-dead-code")
+    val dbResource: IO[Any] = for {
       cfg <- loadConfig
       _   <- migrateDB(cfg.postgres)
       repo = DoobieRecipeRepository.createRecipeRepository(cfg.postgres)

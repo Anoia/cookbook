@@ -12,4 +12,7 @@ lazy val cookbook = project
   .settings(commonSettings)
   .settings(moduleName := "cookbook")
   .settings(name := "cookbook")
+  .dependsOn(boot)
   .aggregate(boot)
+
+Compile / mainClass := Some("com.stuckinadrawer.cookbook.boot.Boot")

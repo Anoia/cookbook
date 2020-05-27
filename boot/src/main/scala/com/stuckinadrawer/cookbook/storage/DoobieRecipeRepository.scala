@@ -16,7 +16,6 @@ import doobie.hikari.HikariTransactor
 import doobie.implicits._
 import doobie.util.update.Update0
 import doobie.postgres.implicits._
-import doobie.util.meta.TimeMeta
 import javatime._
 
 final class DoobieRecipeRepository(xa: HikariTransactor[IO]) {
