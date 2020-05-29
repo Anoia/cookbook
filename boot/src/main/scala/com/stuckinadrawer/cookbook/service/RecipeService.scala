@@ -24,6 +24,8 @@ class RecipeService(repo: RecipeRepository.Service) {
     }
   }
 
+  object OptionalNameQueryParamMatcher extends OptionalQueryParamDecoderMatcher[String]("name")
+
   implicit val encodeRecipeId: Encoder[RecipeId] = (a: RecipeId) => Json.fromLong(a.value)
 
   def optionToResponse[A](
@@ -35,8 +37,8 @@ class RecipeService(repo: RecipeRepository.Service) {
 
   private val http: HttpRoutes[IO] = HttpRoutes.of[IO] {
 
-    case GET -> Root =>
-      repo.getAll.flatMap(Ok(_))
+    case GET -> Root :? OptionalNameQueryParamMatcher(name) =>
+      repo.getAll(name).flatMap(Ok(_))
 
     case GET -> Root / RecipeIdVar(recipeId) =>
       repo.getById(recipeId).flatMap {

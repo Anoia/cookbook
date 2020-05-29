@@ -17,6 +17,7 @@ import doobie.implicits._
 import doobie.util.update.Update0
 import doobie.postgres.implicits._
 import javatime._
+import Fragments.whereAndOpt
 
 final class DoobieRecipeRepository(xa: HikariTransactor[IO]) {
   import DoobieRecipeRepository.SQL
@@ -26,7 +27,8 @@ final class DoobieRecipeRepository(xa: HikariTransactor[IO]) {
     override def getById(id: RecipeId): IO[Option[Recipe]] =
       SQL.get(id).option.transact(xa)
 
-    override def getAll: IO[List[RecipeOverview]] = SQL.getAll.to[List].transact(xa)
+    override def getAll(name: Option[String]): IO[List[RecipeOverview]] =
+      SQL.getAll(name).to[List].transact(xa)
 
     override def delete(id: RecipeId): IO[Int] = SQL.delete(id).run.transact(xa)
 
@@ -93,9 +95,20 @@ object DoobieRecipeRepository {
          FROM recipe where id = ${id.value}
          """.query[Recipe]
 
-    def getAll: Query0[RecipeOverview] =
-      sql"""SELECT id, name, description FROM recipe ORDER BY created_at DESC"""
-        .query[RecipeOverview]
+    def searchBy(name: String): Query0[RecipeOverview] =
+      sql"""
+         SELECT id, name, description 
+         FROM recipe where id ILIKE '%$name%'
+         """.query[RecipeOverview]
+
+    def getAll(name: Option[String]): Query0[RecipeOverview] = {
+      val f1 = name.map(n => fr"name ILIKE '%' || $n || '%'")
+      val q: Fragment =
+        fr"SELECT id, name, description FROM recipe" ++
+          whereAndOpt(f1) ++
+          fr"ORDER BY created_at DESC"
+      q.query[RecipeOverview]
+    }
 
     def update(recipe: Recipe): Update0 =
       sql"""

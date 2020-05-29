@@ -11,8 +11,11 @@ class InMemoryRecipeRepo(now: OffsetDateTime) extends RecipeRepository.Service {
   var repo: Map[RecipeId, Recipe] = Map.empty
   var id: Long                    = 0
 
-  override def getAll: IO[List[RecipeOverview]] = IO {
-    repo.values.map(r => RecipeOverview(r.id, r.name, r.description)).toList
+  override def getAll(name: Option[String] = None): IO[List[RecipeOverview]] = IO {
+    repo.values
+      .map(r => RecipeOverview(r.id, r.name, r.description))
+      .toList
+      .filter(r => name.forall(_ == r.name))
   }
 
   override def getById(id: RecipeId): IO[Option[Recipe]] = IO { repo.get(id) }
