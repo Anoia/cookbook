@@ -1,7 +1,7 @@
-package com.stuckinadrawer.cookbook.storage
+package com.stuckinadrawer.cookbook.recipes
 
 import cats.effect.IO
-import com.stuckinadrawer.cookbook.domain.Recipe.{
+import com.stuckinadrawer.cookbook.recipes.Recipe.{
   NewRecipe,
   Recipe,
   RecipeId,

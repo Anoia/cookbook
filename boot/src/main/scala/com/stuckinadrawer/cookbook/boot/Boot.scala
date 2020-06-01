@@ -2,9 +2,9 @@ package com.stuckinadrawer.cookbook.boot
 
 import cats.effect._
 import cats.implicits._
-import com.stuckinadrawer.cookbook.domain.{HttpConfig, PostgresConfig, ServiceConf}
-import com.stuckinadrawer.cookbook.service.RecipeService
-import com.stuckinadrawer.cookbook.storage.{DoobieRecipeRepository, RecipeRepository}
+import com.stuckinadrawer.cookbook.boot.ServiceConf
+import com.stuckinadrawer.cookbook.recipes.{RecipeRepository, RecipeService}
+import com.stuckinadrawer.cookbook.recipes.DoobieRecipeRepository
 import org.flywaydb.core.Flyway
 import org.http4s.implicits._
 import org.http4s.server.Router
@@ -33,7 +33,10 @@ object Boot extends IOApp {
     val httpApp = CORS(Router("/" -> services).orNotFound, corsConfig)
     BlazeServerBuilder[IO]
       .bindHttp(cfg.port, cfg.host)
-      .withHttpApp(Logger.httpApp(logHeaders = true, logBody = true)(httpApp))
+      .withHttpApp(Logger.httpApp[IO](logHeaders = true, logBody = true, logAction = Some(s => {
+        println(s)
+        IO.unit
+      }))(httpApp))
   }
 
   override def run(args: List[String]): IO[ExitCode] = {

@@ -3,8 +3,8 @@ package com.stuckinadrawer.cookbook.test
 import java.time.OffsetDateTime
 
 import cats.effect.IO
-import com.stuckinadrawer.cookbook.domain.Recipe.NewRecipe
-import com.stuckinadrawer.cookbook.service.RecipeService
+import com.stuckinadrawer.cookbook.recipes.Recipe.NewRecipe
+import com.stuckinadrawer.cookbook.recipes.RecipeService
 import io.circe._
 import org.http4s.circe._
 import org.http4s.dsl.io._

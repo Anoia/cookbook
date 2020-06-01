@@ -3,8 +3,8 @@ package com.stuckinadrawer.cookbook.test
 import java.time.OffsetDateTime
 
 import cats.effect.IO
-import com.stuckinadrawer.cookbook.domain.Recipe._
-import com.stuckinadrawer.cookbook.storage.RecipeRepository
+import com.stuckinadrawer.cookbook.recipes.Recipe._
+import com.stuckinadrawer.cookbook.recipes.RecipeRepository
 
 class InMemoryRecipeRepo(now: OffsetDateTime) extends RecipeRepository.Service {
 

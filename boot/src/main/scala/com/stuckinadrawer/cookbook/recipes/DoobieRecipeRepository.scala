@@ -1,9 +1,8 @@
-package com.stuckinadrawer.cookbook.storage
+package com.stuckinadrawer.cookbook.recipes
 
 import cats.effect._
 import cats.implicits._
-import com.stuckinadrawer.cookbook.domain.PostgresConfig
-import com.stuckinadrawer.cookbook.domain.Recipe.{
+import com.stuckinadrawer.cookbook.recipes.Recipe.{
   NewRecipe,
   Recipe,
   RecipeId,
@@ -11,13 +10,14 @@ import com.stuckinadrawer.cookbook.domain.Recipe.{
   RecipePatch
 }
 import doobie._
+import Fragments.whereAndOpt
+import com.stuckinadrawer.cookbook.boot.PostgresConfig
 import doobie.free.connection
 import doobie.hikari.HikariTransactor
 import doobie.implicits._
-import doobie.util.update.Update0
 import doobie.postgres.implicits._
+import doobie.util.update.Update0
 import javatime._
-import Fragments.whereAndOpt
 
 final class DoobieRecipeRepository(xa: HikariTransactor[IO]) {
   import DoobieRecipeRepository.SQL

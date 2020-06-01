@@ -1,10 +1,9 @@
-package com.stuckinadrawer.cookbook.service
+package com.stuckinadrawer.cookbook.recipes
 
 import cats.effect.IO
-import com.stuckinadrawer.cookbook.domain.Recipe.{NewRecipe, RecipeId, RecipePatch}
-import com.stuckinadrawer.cookbook.storage.RecipeRepository
-import io.circe.{Encoder, Json}
+import Recipe.{NewRecipe, RecipeId, RecipePatch}
 import io.circe.generic.auto._
+import io.circe.{Encoder, Json}
 import org.http4s._
 import org.http4s.circe.CirceEntityDecoder._
 import org.http4s.circe.CirceEntityEncoder._

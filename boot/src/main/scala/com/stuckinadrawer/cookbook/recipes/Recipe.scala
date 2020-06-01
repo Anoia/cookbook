@@ -1,4 +1,4 @@
-package com.stuckinadrawer.cookbook.domain
+package com.stuckinadrawer.cookbook.recipes
 
 import java.time.OffsetDateTime
 
