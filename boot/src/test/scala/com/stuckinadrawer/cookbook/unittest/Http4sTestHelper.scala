@@ -1,4 +1,4 @@
-package com.stuckinadrawer.cookbook.test
+package com.stuckinadrawer.cookbook.unittest
 
 import cats.effect.IO
 import org.http4s.{EntityDecoder, Response, Status}

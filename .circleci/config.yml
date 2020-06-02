@@ -4,13 +4,19 @@ jobs:
   build:
     docker:
       - image: openjdk:11
-    working_directory: ~/repo
+        working_directory: ~/repo
+        environment:
+          # Customize the JVM maximum heap limit
+          JVM_OPTS: -Xmx3200m
+          TERM: dumb
+          SBT_VERSION: 1.3.8
 
-    environment:
-      # Customize the JVM maximum heap limit
-      JVM_OPTS: -Xmx3200m
-      TERM: dumb
-      SBT_VERSION: 1.3.8
+      - image: circleci/postgres:12.2
+        environment:
+          POSTGRES_USER=cookbook
+          POSTGRES_PASSWORD=cookbook
+
+
 
     steps:
       - run: echo 'export ARTIFACT_BUILD=$CIRCLE_PROJECT_REPONAME-$CIRCLE_BUILD_NUM.zip' >> $BASH_ENV
