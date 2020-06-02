@@ -2,8 +2,11 @@ package com.stuckinadrawer.cookbook.boot
 
 import cats.effect._
 import cats.implicits._
-import com.stuckinadrawer.cookbook.recipes.{RecipeRepository, RecipeService}
+import com.stuckinadrawer.cookbook.foodstuffs.{DoobieFoodStuffRepository, FoodStuffService}
+import com.stuckinadrawer.cookbook.recipes.RecipeService
 import com.stuckinadrawer.cookbook.recipes.DoobieRecipeRepository
+import doobie.ExecutionContexts
+import doobie.hikari.HikariTransactor
 import org.flywaydb.core.Flyway
 import org.http4s.implicits._
 import org.http4s.server.Router
@@ -21,8 +24,26 @@ object Boot extends IOApp {
     ConfigSource.default.load[ServiceConf].leftMap(e => new IllegalStateException(e.toString))
   }
 
-  def serverBuilder(repo: RecipeRepository.Service)(cfg: HttpConfig): BlazeServerBuilder[IO] = {
-    val services = new RecipeService(repo).recipeRoutes
+  def createTransactor(cfg: PostgresConfig): Resource[IO, HikariTransactor[IO]] = {
+    for {
+      ce <- ExecutionContexts.fixedThreadPool[IO](32)
+      be <- Blocker[IO]
+      xa <- HikariTransactor
+        .newHikariTransactor[IO](
+          cfg.driver,
+          cfg.url,
+          cfg.user,
+          cfg.pass,
+          ce,
+          be
+        )
+    } yield xa
+  }
+
+  def serverBuilder(xa: HikariTransactor[IO])(cfg: HttpConfig): BlazeServerBuilder[IO] = {
+    val recipeService = new RecipeService(new DoobieRecipeRepository(xa).recipeRepository).recipeRoutes
+    val foodStuffService = new FoodStuffService(
+      new DoobieFoodStuffRepository(xa).foodStuffRepository).foodStuffRoutes
 
     val corsConfig = CORSConfig(anyOrigin = false,
                                 allowedOrigins = cfg.allowedOrigins,
@@ -31,7 +52,7 @@ object Boot extends IOApp {
 
     val requestLogger = com.typesafe.scalalogging.Logger("request")
 
-    val httpApp = CORS(Router("/" -> services).orNotFound, corsConfig)
+    val httpApp = CORS(Router("/" -> (recipeService <+> foodStuffService)).orNotFound, corsConfig)
     BlazeServerBuilder[IO]
       .bindHttp(cfg.port, cfg.host)
       .withHttpApp(
@@ -46,8 +67,8 @@ object Boot extends IOApp {
     val dbResource: IO[Any] = for {
       cfg <- loadConfig
       _   <- migrateDB(cfg.postgres)
-      repo = DoobieRecipeRepository.createRecipeRepository(cfg.postgres)
-      test <- repo.use(r => serverBuilder(r)(cfg.http).resource.use(_ => IO.never))
+      transactor = createTransactor(cfg.postgres)
+      test <- transactor.use(xa => serverBuilder(xa)(cfg.http).resource.use(_ => IO.never))
     } yield {
       test
     }

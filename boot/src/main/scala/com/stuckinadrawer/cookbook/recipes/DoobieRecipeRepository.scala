@@ -11,7 +11,6 @@ import com.stuckinadrawer.cookbook.recipes.Recipe.{
 }
 import doobie._
 import Fragments.whereAndOpt
-import com.stuckinadrawer.cookbook.boot.PostgresConfig
 import doobie.free.connection
 import doobie.hikari.HikariTransactor
 import doobie.implicits._
@@ -59,27 +58,6 @@ final class DoobieRecipeRepository(xa: HikariTransactor[IO]) {
 }
 
 object DoobieRecipeRepository {
-
-  import doobie.hikari._
-
-  def createRecipeRepository(
-      cfg: PostgresConfig
-  )(implicit cs: ContextShift[IO]): Resource[IO, RecipeRepository.Service] = {
-    // implicit val cs: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
-    for {
-      ce <- ExecutionContexts.fixedThreadPool[IO](32)
-      be <- Blocker[IO]
-      xa <- HikariTransactor
-        .newHikariTransactor[IO](
-          cfg.driver,
-          cfg.url,
-          cfg.user,
-          cfg.pass,
-          ce,
-          be
-        )
-    } yield new DoobieRecipeRepository(xa).recipeRepository
-  }
 
   object SQL {
 

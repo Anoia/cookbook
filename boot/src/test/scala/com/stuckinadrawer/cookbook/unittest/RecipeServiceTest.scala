@@ -32,19 +32,19 @@ class RecipeServiceTest extends munit.FunSuite with Http4sTestHelper {
   test("get recipe by id") {
     inMemoryRepo.create(pastaRecipe).unsafeRunSync()
 
-    val response = routes.orNotFound.run(Request(method = GET, uri = uri"/recipes/1"))
+    val response = routes.orNotFound.run(Request(method = GET, uri = uri"/recipe/1"))
 
     check[Json](response, Status.Ok, Some(pastaJson))
 
   }
 
   test("get non existing recipe") {
-    val response = routes.orNotFound.run(Request(method = GET, uri = uri"/recipes/6"))
+    val response = routes.orNotFound.run(Request(method = GET, uri = uri"/recipe/6"))
     check[Json](response, Status.NotFound, None)
   }
 
   test("get all recipes") {
-    val response = routes.orNotFound.run(Request(method = GET, uri = uri"/recipes"))
+    val response = routes.orNotFound.run(Request(method = GET, uri = uri"/recipe"))
     val expectedJson = Json.fromValues(
       List(
         Json.obj(("id", Json.fromBigInt(1)),
