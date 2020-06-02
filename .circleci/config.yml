@@ -13,8 +13,8 @@ jobs:
 
       - image: circleci/postgres:12.2
         environment:
-          POSTGRES_USER=cookbook
-          POSTGRES_PASSWORD=cookbook
+          POSTGRES_USER: cookbook
+          POSTGRES_PASSWORD: cookbook
 
 
 
