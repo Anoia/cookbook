@@ -2,7 +2,6 @@ package com.stuckinadrawer.cookbook.boot
 
 import cats.effect._
 import cats.implicits._
-import com.stuckinadrawer.cookbook.boot.ServiceConf
 import com.stuckinadrawer.cookbook.recipes.{RecipeRepository, RecipeService}
 import com.stuckinadrawer.cookbook.recipes.DoobieRecipeRepository
 import org.flywaydb.core.Flyway
@@ -30,13 +29,15 @@ object Boot extends IOApp {
                                 allowCredentials = false,
                                 maxAge = 1.day.toSeconds)
 
+    val requestLogger = com.typesafe.scalalogging.Logger("request")
+
     val httpApp = CORS(Router("/" -> services).orNotFound, corsConfig)
     BlazeServerBuilder[IO]
       .bindHttp(cfg.port, cfg.host)
-      .withHttpApp(Logger.httpApp[IO](logHeaders = true, logBody = true, logAction = Some(s => {
-        println(s)
-        IO.unit
-      }))(httpApp))
+      .withHttpApp(
+        Logger.httpApp[IO](logHeaders = true,
+                           logBody = true,
+                           logAction = Some(s => IO.pure(requestLogger.info(s))))(httpApp))
   }
 
   override def run(args: List[String]): IO[ExitCode] = {

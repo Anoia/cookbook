@@ -2,9 +2,14 @@ import sbt._
 object Dependencies {
   val zio = "dev.zio" %% "zio" % Version.zio
 
-  val zioCatsInterop = "dev.zio" %% "zio-interop-cats" % "2.0.0.0-RC12"
+//  val zioCatsInterop = "dev.zio" %% "zio-interop-cats" % "2.0.0.0-RC12"
 
   val pureConfig = "com.github.pureconfig" %% "pureconfig" % Version.pureConfig
+  val scalaLogging =
+    Seq(
+      "com.typesafe.scala-logging" %% "scala-logging"  % "3.9.2",
+      "ch.qos.logback"             % "logback-classic" % "1.2.3"
+    )
 
   val doobie = Seq(
     "org.tpolecat" %% "doobie-core",
