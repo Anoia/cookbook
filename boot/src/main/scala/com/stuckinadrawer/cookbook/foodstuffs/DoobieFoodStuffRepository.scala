@@ -33,8 +33,8 @@ final class DoobieFoodStuffRepository(xa: HikariTransactor[IO]) {
       SQL
         .create(foodStuff)
         .withUniqueGeneratedKeys[FoodStuff](
-          "id",
-          "name",
+          "foodstuff_id",
+          "foodstuff_name",
           "description",
           "created_at",
           "updated_at"
@@ -59,20 +59,20 @@ object DoobieFoodStuffRepository {
 
     def create(foodStuff: NewFoodStuff): Update0 =
       sql"""
-         INSERT INTO foodstuff(name) 
+         INSERT INTO foodstuff(foodstuff_name) 
          VALUES (${foodStuff.name})
          """.update
 
     def get(id: FoodStuffId): Query0[FoodStuff] =
       sql"""
-         SELECT id, name, description, created_at, updated_at
-         FROM foodstuff where id = ${id.value}
+         SELECT foodstuff_id, foodstuff_name, description, created_at, updated_at
+         FROM foodstuff where foodstuff_id = ${id.value}
          """.query[FoodStuff]
 
     def getAll(name: Option[String]): Query0[FoodStuffOverview] = {
-      val f1 = name.map(n => fr"name ILIKE '%' || $n || '%'")
+      val f1 = name.map(n => fr"foodstuff_name ILIKE '%' || $n || '%'")
       val q: Fragment =
-        fr"SELECT id, name FROM foodstuff" ++
+        fr"SELECT foodstuff_id, foodstuff_name FROM foodstuff" ++
           whereAndOpt(f1) ++
           fr"ORDER BY created_at DESC"
       q.query[FoodStuffOverview]
@@ -81,13 +81,13 @@ object DoobieFoodStuffRepository {
     def update(foodStuff: FoodStuff): Update0 =
       sql"""
          UPDATE foodstuff SET
-         name = ${foodStuff.name},
+         foodstuff_name = ${foodStuff.name},
          description = ${foodStuff.description}
-         WHERE id= ${foodStuff.id.value}
+         WHERE foodstuff_id= ${foodStuff.id.value}
          """.update
 
     def delete(id: FoodStuffId): Update0 =
-      sql"""DELETE FROM foodstuff WHERE id=${id.value}""".update
+      sql"""DELETE FROM foodstuff WHERE foodstuff_id=${id.value}""".update
   }
 
 }

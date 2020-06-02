@@ -4,7 +4,7 @@ import java.time.OffsetDateTime
 
 object Recipe {
 
-  final case class RecipeId(value: Long) extends AnyVal
+  final case class RecipeId(value: Int) extends AnyVal
 
   type Ingredient = String
 

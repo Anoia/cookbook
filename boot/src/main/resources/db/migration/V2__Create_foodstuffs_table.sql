@@ -1,11 +1,11 @@
 CREATE TABLE IF NOT EXISTS foodstuff
 (
-    id          BIGSERIAL PRIMARY KEY,
-    name        TEXT                     NOT NULL CHECK (name <> ''),
-    description TEXT                     NOT NULL DEFAULT '',
-    created_at  TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT (NOW()),
-    updated_at  TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT (NOW()),
-    CONSTRAINT foodstuff_name_unique UNIQUE (name)
+    foodstuff_id   INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    foodstuff_name TEXT                     NOT NULL CHECK (foodstuff_name <> ''),
+    description    TEXT                     NOT NULL DEFAULT '',
+    created_at     TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT (NOW()),
+    updated_at     TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT (NOW()),
+    CONSTRAINT foodstuff_name_unique UNIQUE (foodstuff_name)
 );
 
 DROP TRIGGER IF EXISTS store_foodstuff_updated_at ON foodstuff;

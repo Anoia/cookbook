@@ -18,14 +18,14 @@ class RecipeService(repo: RecipeRepository.Service) {
 
   object RecipeIdVar {
     def unapply(arg: String): Option[RecipeId] = {
-      Try(arg.toLong) match {
+      Try(arg.toInt) match {
         case Success(value) if value > 0 => Some(RecipeId(value))
         case _                           => None
       }
     }
   }
 
-  implicit val encodeRecipeId: Encoder[RecipeId] = (a: RecipeId) => Json.fromLong(a.value)
+  implicit val encodeRecipeId: Encoder[RecipeId] = (a: RecipeId) => Json.fromInt(a.value)
 
   private val http: HttpRoutes[IO] = HttpRoutes.of[IO] {
 

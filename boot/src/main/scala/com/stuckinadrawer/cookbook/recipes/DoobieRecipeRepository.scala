@@ -35,8 +35,8 @@ final class DoobieRecipeRepository(xa: HikariTransactor[IO]) {
       SQL
         .create(recipe)
         .withUniqueGeneratedKeys[Recipe](
-          "id",
-          "name",
+          "recipe_id",
+          "recipe_name",
           "description",
           "ingredients",
           "instructions",
@@ -63,20 +63,20 @@ object DoobieRecipeRepository {
 
     def create(recipe: NewRecipe): Update0 =
       sql"""
-         INSERT INTO recipe(name, description, ingredients, instructions) 
+         INSERT INTO recipe(recipe_name, description, ingredients, instructions) 
          VALUES (${recipe.name}, ${recipe.description}, ${recipe.ingredients}, ${recipe.instructions})
          """.update
 
     def get(id: RecipeId): Query0[Recipe] =
       sql"""
-         SELECT id, name, description, ingredients, instructions, created_at, updated_at
-         FROM recipe where id = ${id.value}
+         SELECT recipe_id, recipe_name, description, ingredients, instructions, created_at, updated_at
+         FROM recipe where recipe_id = ${id.value}
          """.query[Recipe]
 
     def getAll(name: Option[String]): Query0[RecipeOverview] = {
-      val f1 = name.map(n => fr"name ILIKE '%' || $n || '%'")
+      val f1 = name.map(n => fr"recipe_name ILIKE '%' || $n || '%'")
       val q: Fragment =
-        fr"SELECT id, name, description FROM recipe" ++
+        fr"SELECT recipe_id, recipe_name, description FROM recipe" ++
           whereAndOpt(f1) ++
           fr"ORDER BY created_at DESC"
       q.query[RecipeOverview]
@@ -85,14 +85,14 @@ object DoobieRecipeRepository {
     def update(recipe: Recipe): Update0 =
       sql"""
          UPDATE recipe SET
-         name = ${recipe.name},
+         recipe_name = ${recipe.name},
          description = ${recipe.description},
          ingredients = ${recipe.ingredients},
          instructions = ${recipe.instructions}
-         WHERE id= ${recipe.id.value}
+         WHERE recipe_id= ${recipe.id.value}
          """.update
 
     def delete(id: RecipeId): Update0 =
-      sql"""DELETE FROM recipe WHERE id=${id.value}""".update
+      sql"""DELETE FROM recipe WHERE recipe_id=${id.value}""".update
   }
 }

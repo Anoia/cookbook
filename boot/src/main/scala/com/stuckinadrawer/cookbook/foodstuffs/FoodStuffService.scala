@@ -18,13 +18,13 @@ class FoodStuffService(repo: FoodStuffRepository.Service) {
 
   object FoodStuffIdVar {
     def unapply(arg: String): Option[FoodStuffId] = {
-      Try(arg.toLong) match {
+      Try(arg.toInt) match {
         case Success(value) if value > 0 => Some(FoodStuffId(value))
         case _                           => None
       }
     }
   }
-  implicit val encodeFoodStuffId: Encoder[FoodStuffId] = (a: FoodStuffId) => Json.fromLong(a.value)
+  implicit val encodeFoodStuffId: Encoder[FoodStuffId] = (a: FoodStuffId) => Json.fromInt(a.value)
 
   private val http: HttpRoutes[IO] = HttpRoutes.of[IO] {
     case GET -> Root :? OptionalNameQueryParamMatcher(name) =>

@@ -9,7 +9,7 @@ import com.stuckinadrawer.cookbook.recipes.RecipeRepository
 class InMemoryRecipeRepo(now: OffsetDateTime) extends RecipeRepository.Service {
 
   var repo: Map[RecipeId, Recipe] = Map.empty
-  var id: Long                    = 0
+  var id: Int                     = 0
 
   override def getAll(name: Option[String] = None): IO[List[RecipeOverview]] = IO {
     repo.values
