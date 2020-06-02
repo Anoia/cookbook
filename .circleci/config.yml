@@ -15,6 +15,7 @@ jobs:
         environment:
           POSTGRES_USER: cookbook
           POSTGRES_PASSWORD: cookbook
+          POSTGRES_DB: cookbook
 
 
 
