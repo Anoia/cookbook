@@ -95,12 +95,6 @@ object DoobieRecipeRepository {
          FROM recipe where id = ${id.value}
          """.query[Recipe]
 
-    def searchBy(name: String): Query0[RecipeOverview] =
-      sql"""
-         SELECT id, name, description 
-         FROM recipe where id ILIKE '%$name%'
-         """.query[RecipeOverview]
-
     def getAll(name: Option[String]): Query0[RecipeOverview] = {
       val f1 = name.map(n => fr"name ILIKE '%' || $n || '%'")
       val q: Fragment =

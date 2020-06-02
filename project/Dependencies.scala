@@ -30,7 +30,8 @@ object Dependencies {
     "io.circe" %% "circe-literal"
   ).map(_ % Version.circe)
 
-  val scalaMeta = "org.scalameta" %% "munit" % "0.7.6" % Test
+  val scalaMeta = "org.scalameta" %% "munit"       % "0.7.6" % Test
+  val specs2    = "org.specs2"    %% "specs2-core" % "4.8.3" % Test
 
 }
 object Version {
