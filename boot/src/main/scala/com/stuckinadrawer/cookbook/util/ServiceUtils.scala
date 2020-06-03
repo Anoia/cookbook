@@ -1,6 +1,8 @@
 package com.stuckinadrawer.cookbook.util
 
 import cats.effect.IO
+import com.stuckinadrawer.cookbook.foodstuffs.FoodStuff.FoodStuffId
+import io.circe.{Decoder, Encoder, HCursor, Json}
 import org.http4s.{EntityEncoder, Response}
 import org.http4s.dsl.io._
 
@@ -14,5 +16,8 @@ object ServiceUtils {
     case Some(value) => Ok(value)
     case None        => NotFound()
   }
+  implicit val encodeFoodStuffId: Encoder[FoodStuffId] = (a: FoodStuffId) => Json.fromInt(a.value)
+  implicit val decodeFoodStuffId: Decoder[FoodStuffId] = (c: HCursor) =>
+    for (i <- c.as[Int]) yield FoodStuffId(i)
 
 }

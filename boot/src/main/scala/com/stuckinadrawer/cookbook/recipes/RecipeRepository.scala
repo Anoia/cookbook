@@ -11,8 +11,8 @@ import com.stuckinadrawer.cookbook.recipes.Recipe.{
 
 object RecipeRepository {
   trait Service {
-    def getAll(name: Option[String]): IO[List[RecipeOverview]]
-    def getById(id: RecipeId): IO[Option[Recipe]]
+    def getRecipesOverviews(name: Option[String]): IO[List[RecipeOverview]]
+    def getRecipeById(id: RecipeId): IO[Option[Recipe]]
     def delete(id: RecipeId): IO[Int]
     def create(recipe: NewRecipe): IO[Recipe]
     def update(id: RecipeId, patch: RecipePatch): IO[Option[Recipe]]

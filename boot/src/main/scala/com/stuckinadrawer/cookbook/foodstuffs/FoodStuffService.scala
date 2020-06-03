@@ -4,7 +4,7 @@ import cats.effect.IO
 import com.stuckinadrawer.cookbook.foodstuffs.FoodStuff.{FoodStuffId, FoodStuffPatch, NewFoodStuff}
 import com.stuckinadrawer.cookbook.util.ServiceUtils
 import com.stuckinadrawer.cookbook.util.ServiceUtils.OptionalNameQueryParamMatcher
-import io.circe.{Encoder, Json}
+import io.circe.Encoder
 import org.http4s.HttpRoutes
 import org.http4s.dsl.io._
 import io.circe.generic.auto._
@@ -24,7 +24,8 @@ class FoodStuffService(repo: FoodStuffRepository.Service) {
       }
     }
   }
-  implicit val encodeFoodStuffId: Encoder[FoodStuffId] = (a: FoodStuffId) => Json.fromInt(a.value)
+
+  implicit val encodeFoodStuffId: Encoder[FoodStuffId] = ServiceUtils.encodeFoodStuffId
 
   private val http: HttpRoutes[IO] = HttpRoutes.of[IO] {
     case GET -> Root :? OptionalNameQueryParamMatcher(name) =>

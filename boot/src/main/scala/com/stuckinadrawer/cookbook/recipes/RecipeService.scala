@@ -2,10 +2,11 @@ package com.stuckinadrawer.cookbook.recipes
 
 import cats.effect.IO
 import Recipe.{NewRecipe, RecipeId, RecipePatch}
+import com.stuckinadrawer.cookbook.foodstuffs.FoodStuff.FoodStuffId
 import com.stuckinadrawer.cookbook.util.ServiceUtils
 import com.stuckinadrawer.cookbook.util.ServiceUtils.OptionalNameQueryParamMatcher
 import io.circe.generic.auto._
-import io.circe.{Encoder, Json}
+import io.circe.{Decoder, Encoder, Json}
 import org.http4s._
 import org.http4s.circe.CirceEntityDecoder._
 import org.http4s.circe.CirceEntityEncoder._
@@ -25,15 +26,17 @@ class RecipeService(repo: RecipeRepository.Service) {
     }
   }
 
-  implicit val encodeRecipeId: Encoder[RecipeId] = (a: RecipeId) => Json.fromInt(a.value)
+  implicit val encodeRecipeId: Encoder[RecipeId]       = (a: RecipeId) => Json.fromInt(a.value)
+  implicit val encodeFoodStuffId: Encoder[FoodStuffId] = ServiceUtils.encodeFoodStuffId
+  implicit val decodeFoodStuffId: Decoder[FoodStuffId] = ServiceUtils.decodeFoodStuffId
 
   private val http: HttpRoutes[IO] = HttpRoutes.of[IO] {
 
     case GET -> Root :? OptionalNameQueryParamMatcher(name) =>
-      repo.getAll(name).flatMap(Ok(_))
+      repo.getRecipesOverviews(name).flatMap(Ok(_))
 
     case GET -> Root / RecipeIdVar(recipeId) =>
-      repo.getById(recipeId).flatMap {
+      repo.getRecipeById(recipeId).flatMap {
         case Some(value) => Ok(value)
         case None        => NotFound()
       }

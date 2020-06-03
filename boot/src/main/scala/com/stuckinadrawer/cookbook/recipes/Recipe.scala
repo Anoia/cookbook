@@ -2,11 +2,13 @@ package com.stuckinadrawer.cookbook.recipes
 
 import java.time.OffsetDateTime
 
+import com.stuckinadrawer.cookbook.foodstuffs.FoodStuff.FoodStuffId
+
 object Recipe {
 
   final case class RecipeId(value: Int) extends AnyVal
 
-  type Ingredient = String
+  final case class Ingredient(foodStuffId: FoodStuffId, name: String, amount: Int)
 
   final case class Recipe(id: RecipeId,
                           name: String,
@@ -27,10 +29,7 @@ object Recipe {
 
   final case class RecipeOverview(id: RecipeId, name: String, description: String)
 
-  final case class NewRecipe(name: String,
-                             description: String,
-                             ingredients: List[Ingredient],
-                             instructions: String)
+  final case class NewRecipe(name: String)
 
   final case class RecipePatch(name: Option[String] = None,
                                description: Option[String] = None,

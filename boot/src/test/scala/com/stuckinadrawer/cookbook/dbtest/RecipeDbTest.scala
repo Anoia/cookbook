@@ -1,18 +1,20 @@
 package com.stuckinadrawer.cookbook.dbtest
 
-import java.time.OffsetDateTime
-
+import com.stuckinadrawer.cookbook.foodstuffs.FoodStuff.FoodStuffId
 import com.stuckinadrawer.cookbook.recipes.DoobieRecipeRepository.SQL
-import com.stuckinadrawer.cookbook.recipes.Recipe.{NewRecipe, Recipe, RecipeId}
+import com.stuckinadrawer.cookbook.recipes.Recipe.RecipeId
 
 class RecipeDbTest extends DbTest {
 
-  check(SQL.create(NewRecipe("", "", List.empty, "")))
-  // checkOutput(SQL.get(RecipeId(1)))
-  check(SQL.getAll(Some("")))
-  check(
-    SQL.update(
-      Recipe(RecipeId(1), "", "", List.empty, "", OffsetDateTime.now(), OffsetDateTime.now())))
-  check(SQL.delete(RecipeId(1)))
+  check(SQL.getRecipesOverviews(Some("")))
+  check(SQL.deleteRecipe(RecipeId(1)))
+
+  // check(SQL.getRecipeDataForRecipe(RecipeId(1)))  // TODO timestamp issue
+  check(SQL.getIngredientsForRecipe(RecipeId(1)))
+
+  check(SQL.removeOldIngredientsFromRecipe(RecipeId(1), List.empty))
+  check(SQL.removeOldIngredientsFromRecipe(RecipeId(1), List(FoodStuffId(1))))
+
+  check(SQL.insertOrUpdateRecipeIngredients())
 
 }
