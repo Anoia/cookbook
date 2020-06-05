@@ -14,3 +14,5 @@ CREATE TRIGGER store_foodstuff_updated_at
     ON foodstuff
     FOR EACH ROW
 EXECUTE PROCEDURE set_updated_at();
+
+CREATE UNIQUE INDEX foodstuff_name_unique_idx on foodstuff(lower(foodstuff_name))
