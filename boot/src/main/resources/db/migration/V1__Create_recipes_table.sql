@@ -3,7 +3,6 @@ CREATE TABLE IF NOT EXISTS recipe
     recipe_id    INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     recipe_name  TEXT                     NOT NULL,
     description  TEXT                     NOT NULL DEFAULT '',
-    ingredients  TEXT[]                   NOT NULL DEFAULT array []::text[],
     instructions TEXT                     NOT NULL DEFAULT '',
     created_at   TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT (NOW()),
     updated_at   TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT (NOW())
