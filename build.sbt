@@ -14,5 +14,6 @@ lazy val cookbook = project
   .settings(name := "cookbook")
   .dependsOn(boot)
   .aggregate(boot)
+  .enablePlugins(JavaAppPackaging)
 
 Compile / mainClass := Some("com.stuckinadrawer.cookbook.boot.Boot")
