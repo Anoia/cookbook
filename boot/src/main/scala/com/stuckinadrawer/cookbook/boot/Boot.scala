@@ -24,6 +24,14 @@ object Boot extends IOApp {
     ConfigSource.default.load[ServiceConf].leftMap(e => new IllegalStateException(e.toString))
   }
 
+  def getConfigFromEnvIfSet(fileCfg: PostgresConfig): PostgresConfig = {
+    (for {
+      url  <- sys.env.get("JDBC_DATABASE_URL")
+      user <- sys.env.get("JDBC_DATABASE_USERNAME")
+      pass <- sys.env.get("JDBC_DATABASE_PASSWORD")
+    } yield PostgresConfig(fileCfg.driver, url, user, pass)).getOrElse(fileCfg)
+  }
+
   def createTransactor(cfg: PostgresConfig): Resource[IO, HikariTransactor[IO]] = {
     for {
       ce <- ExecutionContexts.fixedThreadPool[IO](32)
@@ -67,7 +75,7 @@ object Boot extends IOApp {
     val dbResource: IO[Any] = for {
       cfg <- loadConfig
       _   <- migrateDB(cfg.postgres)
-      transactor = createTransactor(cfg.postgres)
+      transactor = createTransactor(getConfigFromEnvIfSet(cfg.postgres))
       test <- transactor.use(xa => serverBuilder(xa)(cfg.http).resource.use(_ => IO.never))
     } yield {
       test
