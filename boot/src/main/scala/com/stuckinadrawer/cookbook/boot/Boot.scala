@@ -70,12 +70,12 @@ object Boot extends IOApp {
   }
 
   override def run(args: List[String]): IO[ExitCode] = {
-
     @nowarn("cat=w-flag-dead-code")
     val dbResource: IO[Any] = for {
       cfg <- loadConfig
-      _   <- migrateDB(cfg.postgres)
-      transactor = createTransactor(getConfigFromEnvIfSet(cfg.postgres))
+      dbCfg = getConfigFromEnvIfSet(cfg.postgres)
+      _ <- migrateDB(dbCfg)
+      transactor = createTransactor(dbCfg)
       test <- transactor.use(xa => serverBuilder(xa)(cfg.http).resource.use(_ => IO.never))
     } yield {
       test
