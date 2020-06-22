@@ -48,8 +48,12 @@ object Boot extends IOApp {
 
   import scala.util.control.Exception._
 
-  def getPortFromEnv(defaultPort: Int): Int = {
-    sys.env.get("PORT").flatMap(s => allCatch.opt(s.toInt)).getOrElse(defaultPort)
+  def getPortAndHostFromEnv(defaultPort: Int, defaultHost: String): (Int, String) = {
+    sys.env
+      .get("PORT")
+      .flatMap(p => allCatch.opt(p.toInt))
+      .map(p => (p, "0.0.0.0"))
+      .getOrElse((defaultPort, defaultHost))
   }
 
   def serverBuilder(xa: HikariTransactor[IO])(cfg: HttpConfig): BlazeServerBuilder[IO] = {
@@ -64,10 +68,12 @@ object Boot extends IOApp {
 
     val requestLogger = com.typesafe.scalalogging.Logger("request")
 
+    val (port, host) = getPortAndHostFromEnv(cfg.port, cfg.host)
+
     val httpApp =
       CORS(Router("/" -> (recipeService <+> foodStuffService)).orNotFound, CORS.DefaultCORSConfig)
     BlazeServerBuilder[IO]
-      .bindHttp(getPortFromEnv(cfg.port), cfg.host)
+      .bindHttp(port, host)
       .withHttpApp(
         Logger.httpApp[IO](logHeaders = true,
                            logBody = true,
