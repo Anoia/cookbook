@@ -48,6 +48,12 @@ object Boot extends IOApp {
     } yield xa
   }
 
+  import scala.util.control.Exception._
+
+  def getPortFromEnv(defaultPort: Int): Int = {
+    sys.env.get("PORT").flatMap(s => allCatch.opt(s.toInt)).getOrElse(defaultPort)
+  }
+
   def serverBuilder(xa: HikariTransactor[IO])(cfg: HttpConfig): BlazeServerBuilder[IO] = {
     val recipeService = new RecipeService(new DoobieRecipeRepository(xa).recipeRepository).recipeRoutes
     val foodStuffService = new FoodStuffService(
@@ -62,7 +68,7 @@ object Boot extends IOApp {
 
     val httpApp = CORS(Router("/" -> (recipeService <+> foodStuffService)).orNotFound, corsConfig)
     BlazeServerBuilder[IO]
-      .bindHttp(cfg.port, cfg.host)
+      .bindHttp(getPortFromEnv(cfg.port), cfg.host)
       .withHttpApp(
         Logger.httpApp[IO](logHeaders = true,
                            logBody = true,
