@@ -3,20 +3,18 @@ package com.stuckinadrawer.cookbook.boot
 import cats.effect._
 import cats.implicits._
 import com.stuckinadrawer.cookbook.foodstuffs.{DoobieFoodStuffRepository, FoodStuffService}
-import com.stuckinadrawer.cookbook.recipes.RecipeService
-import com.stuckinadrawer.cookbook.recipes.DoobieRecipeRepository
+import com.stuckinadrawer.cookbook.recipes.{DoobieRecipeRepository, RecipeService}
 import doobie.ExecutionContexts
 import doobie.hikari.HikariTransactor
 import org.flywaydb.core.Flyway
 import org.http4s.implicits._
 import org.http4s.server.Router
 import org.http4s.server.blaze._
-import org.http4s.server.middleware.{CORS, CORSConfig, Logger}
-import pureconfig.generic.auto._
+import org.http4s.server.middleware.{CORS, Logger}
 import pureconfig.ConfigSource
+import pureconfig.generic.auto._
 
 import scala.annotation.nowarn
-import scala.concurrent.duration._
 
 object Boot extends IOApp {
 
@@ -59,14 +57,15 @@ object Boot extends IOApp {
     val foodStuffService = new FoodStuffService(
       new DoobieFoodStuffRepository(xa).foodStuffRepository).foodStuffRoutes
 
-    val corsConfig = CORSConfig(anyOrigin = false,
-                                allowedOrigins = cfg.allowedOrigins,
-                                allowCredentials = false,
-                                maxAge = 1.day.toSeconds)
+//    val corsConfig = CORSConfig(anyOrigin = false,
+//                                allowedOrigins = cfg.allowedOrigins,
+//                                allowCredentials = false,
+//                                maxAge = 1.day.toSeconds)
 
     val requestLogger = com.typesafe.scalalogging.Logger("request")
 
-    val httpApp = CORS(Router("/" -> (recipeService <+> foodStuffService)).orNotFound, corsConfig)
+    val httpApp =
+      CORS(Router("/" -> (recipeService <+> foodStuffService)).orNotFound, CORS.DefaultCORSConfig)
     BlazeServerBuilder[IO]
       .bindHttp(getPortFromEnv(cfg.port), cfg.host)
       .withHttpApp(
